@@ -16,22 +16,33 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: url(./assets/dark_wood.png);
+
+
+}
+
+.main-container {
+    margin: 20px auto 50px auto;
+    max-width: 500px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: rgba(90, 90, 90, 0.381);
+    border-radius: 2%;
+
 }
 
 .field {
-    margin: 50px 0 50px 0;
     position: relative;
-    max-width: 700px;
     width: 100%;
-    aspect-ratio: 1 / 1;
-    /* margin: 0 auto; */
-    background-color: rgb(174, 255, 255);
-    border-radius: 10%;
-    
+    border: 2px solid rgb(0, 0, 0);
 }
 
 .animation {
     transition: all linear 0.2s;
+}
+
+.blocked {
+    pointer-events: none;
 }
 
 .dice {
@@ -41,11 +52,17 @@ body {
     left: 0;
     width: 25%;
     aspect-ratio: 1 / 1;
-    background-color: burlywood;
+    /* background-color: rgb(165, 162, 162); */
+    background: url(./assets/footer_lodyas.png);
     font-size: 5rem;
-    border: 1px solid rgb(174, 255, 255);
+    border: 1px solid rgb(209, 209, 209);
     border-radius: 10%;
     z-index: 1;
+    color: white;
+}
+
+.dice-9 {
+    width: 33.333%;
 }
 
 .dice-16 {
@@ -60,12 +77,78 @@ body {
 .dice-49 {
     width: 14.28%;
 }
-.dice-400 {
+
+.dice-64 {
+    width: 12.5%;
+    font-size: 3rem;
+}
+/* .dice-400 {
     width: 5%;
     font-size: 1.5rem;
-}
+} */
 
 .hidden {
     /* display: none; */
     opacity: 0;
+}
+
+
+.control-panel {
+    margin-top: 50px;
+    max-width: 500px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.control-buttons-container {
+    display: flex;
+    gap: 15px;
+}
+
+.control__button {
+    width: 100%;
+    padding: 2px;
+    font-size: 14px;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+
+.info-panel {
+    padding: 0 15px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 2.5rem;
+    color: white;
+}
+.timer {
+
+}
+.turns {
+
+}
+
+.diff-panel {
+    max-width: 500px;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.diff {
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 30%;
+}
+
+button {
+    transition: all linear 0.2s;
+}
+
+button:hover {
+    background-color: rgb(82, 82, 82);
+    color: white;
 }
