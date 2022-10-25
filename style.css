@@ -22,19 +22,19 @@ body {
 }
 
 .main-container {
-    margin: 20px auto 50px auto;
+    position: relative;
+    margin: 20px 0 50px 0;
     max-width: 500px;
     width: 100%;
     aspect-ratio: 1 / 1;
     background-color: rgba(90, 90, 90, 0.381);
     border-radius: 2%;
-
 }
 
 .field {
     position: relative;
     width: 100%;
-    border: 2px solid rgb(0, 0, 0);
+    aspect-ratio: 1 / 1;
 }
 
 .animation {
@@ -64,7 +64,6 @@ body {
 .dice-9 {
     width: 33.333%;
 }
-
 .dice-16 {
     width: 25%;
 }
@@ -77,18 +76,12 @@ body {
 .dice-49 {
     width: 14.28%;
 }
-
 .dice-64 {
     width: 12.5%;
     font-size: 3rem;
 }
-/* .dice-400 {
-    width: 5%;
-    font-size: 1.5rem;
-} */
 
 .hidden {
-    /* display: none; */
     opacity: 0;
 }
 
@@ -110,7 +103,7 @@ body {
 .control__button {
     width: 100%;
     padding: 2px;
-    font-size: 14px;
+    font-size: 1.4rem;
     border-radius: 5px;
     outline: none;
     cursor: pointer;
@@ -145,10 +138,66 @@ body {
 }
 
 button {
-    transition: all linear 0.2s;
+    /* transition: all linear 0.2s; */
 }
 
 button:hover {
     background-color: rgb(82, 82, 82);
     color: white;
+}
+
+.main-notification {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    background-color: rgba(1, 1, 1, 0.614);
+    border: 3px solid transparent;
+    border-radius: 2%;
+    color: white;
+    font-size: 3rem;
+    text-align: center;
+}
+
+.scoreboard {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    background-color: rgba(1, 1, 1, 0.614);
+    color: black;
+    font-size: 2rem;
+    gap: 5px;
+}
+
+.result-string {
+    max-width: 500px;
+    width: 100%;
+    padding: 3px 0 3px 10px;
+    background-color: rgb(163, 163, 163);
+    border-radius: 10px;
+}
+
+.result-string-empty {
+    max-width: 500px;
+    width: 100%;
+    padding: 3px 0 3px 10px;
+    background-color: rgb(163, 163, 163);
+    border-radius: 10px;
+    text-align: center;
+}
+
+@media (max-width: 400px) {
+    html {
+        font-size: 8px;
+    }
 }

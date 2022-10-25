@@ -2,12 +2,19 @@
 let arrayLength = 16
 
 let array = new Array(arrayLength).fill(0).map((el, index) => el = index+1)
+let sortedArray = new Array(arrayLength).fill(0).map((el, index) => el = index+1)
 let matrix = []
 
 let diceClassName = ''
 let turns = 0
 let seconds = 0
 let isPlaying = false
+let resultsList = []
+let volume = false
+
+if(localStorage.getItem('results')) {
+    resultsList = JSON.parse(localStorage.getItem('results'))
+}
 
 
 function createContainer() {
@@ -28,7 +35,6 @@ function createField() {
         field.append(createDice(array[i]))
     }
     [...mainContainer][0].append(field)
-    // createShuffleBtn()
     randomArray(array)
 }
 
@@ -48,31 +54,16 @@ function createDice(num) {
 
 let nodes = Array.from(document.getElementsByClassName(diceClassName))
 
-// function createShuffleBtn() {
-//     let btn = document.createElement('button')
-//     btn.textContent = 'Shuffle'
-//     btn.addEventListener('click', ()=> {
-//         matrix = []
-//         randomArray(array)
-//         createMatrix(array)
-//         nodes.forEach(el => el.classList.add('animation'))
-//         setTimeout(() => {
-//             remover(nodes)
-//         }, 200);
-//     })
-//     document.body.append(btn)
-// }
-
-
 
 function createPanel() {
     let panel = document.createElement('div')
     panel.className = 'control-panel'
     panel.innerHTML = `     <div class="control-buttons-container">
-                                <button class="control__button start-and-shuffle">Start and shuffle</button>
+                                <button class="control__button start-and-shuffle">Shuffle and start</button>
                                 <button class="control__button save">Save</button>
                                 <button class="control__button load">Load</button>
                                 <button class="control__button results">Results</button>
+                                <button class="control__button sound">Sound</button>
                             </div>
                             <div class="info-panel">
                                 <div class="timer">Time: 00:00</div>
@@ -126,6 +117,7 @@ function changeDiff(num){
     updateTurns()
     arrayLength = num;
     array = new Array(arrayLength).fill(0).map((el, index) => el = index+1);
+    sortedArray = new Array(arrayLength).fill(0).map((el, index) => el = index+1);
     matrix = [];
     [...document.getElementsByClassName('field')][0].remove();
     createField()
@@ -150,6 +142,7 @@ function loadGame(){
         seconds = JSON.parse(localStorage.getItem('time'))
         console.log(arrayLength);
         array = new Array(arrayLength).fill(0).map((el, index) => el = index+1);
+        sortedArray = new Array(arrayLength).fill(0).map((el, index) => el = index+1);
         [...document.getElementsByClassName('field')][0].remove();
         createField()
         nodes = Array.from(document.getElementsByClassName(diceClassName))
@@ -157,6 +150,12 @@ function loadGame(){
         setDicePosition(matrix)
         field[0].addEventListener('mousedown', moveDices)
         field[0].classList.remove('blocked')
+        console.log(true);
+        stopwatch()
+    } else {
+        cPanel[0].classList.add('blocked')
+        createNotification(false)
+
     }
 }
 
@@ -191,7 +190,12 @@ manage[0].addEventListener('click', (item)=> {
     if(item.target.closest('.load')) {
         isPlaying = true
         loadGame()
-        stopwatch()
+    }
+    if(item.target.closest('.results')) {
+        showResults(resultsList)
+    }
+    if(item.target.closest('.sound')) {
+        mute(volume)
     }
 })
 
@@ -276,16 +280,15 @@ let droppable = true
 
 let shiftX
 let shiftY
+let target
 
 
 function moveDices(e) {
     shiftX = e.clientX - e.target.getBoundingClientRect().left
     shiftY = e.clientY - e.target.getBoundingClientRect().top
-    let target = e.target
+    target = e.target
     let elemBelow
     target.classList.add('animation')
-    target.style.zIndex = 1000
-    
     let number = +e.target.id
     let blank = array.length
     let moveCoords
@@ -295,11 +298,13 @@ function moveDices(e) {
     const isValid = isValidForSwap(buttonCoords, blankCoords);
     
     function onMouseMove(event) {
-        event.target.classList.remove('animation')
-        event.target.hidden = true
+        console.log(target.id);
+        target.classList.remove('animation')
+        target.style.zIndex = 1000
+        target.hidden = true
         elemBelow = +document.elementFromPoint(event.clientX, event.clientY).id;
-        event.target.hidden = false
-        moveAt(event.layerX, event.layerY, shiftX, shiftY, event.target);
+        target.hidden = false
+        moveAt(event.layerX, event.layerY, shiftX, shiftY, target);
         moveCoords = findCoords(elemBelow, matrix)
         droppable = false
         if(moveCoords) {
@@ -320,17 +325,18 @@ function moveDices(e) {
     }
 
     target.onmouseup = function(ev) {
+        field[0].removeEventListener('mousemove', onMouseMove)
         if(number !== 0 && isMoveValid) {
+            // playAudio()
             diceSwap(buttonCoords, blankCoords, matrix)
             setDicePosition(matrix)
             turns++
             updateTurns()
         }
-
         target.classList.add('animation')
         setDicePosition(matrix)
-        field[0].removeEventListener('mousemove', onMouseMove)
         if(number !== 0 && isValid && droppable) {
+            // playAudio()
             diceSwap(buttonCoords, blankCoords, matrix)
             setDicePosition(matrix)
             turns++
@@ -338,10 +344,9 @@ function moveDices(e) {
         }
         droppable = true
         target.onmouseup = null
-        // target.classList.remove('animation')
-        // setTimeout(() => {
-        //     remover(nodes)
-        // }, 200);
+        setTimeout(() => {
+            remover(nodes)
+        }, 200);
     }
     field[0].onmouseup = function(){
         setTimeout(() => {
@@ -351,79 +356,6 @@ function moveDices(e) {
     }
 }
 
-
-// field[0].addEventListener('mousedown', (e)=> {
-//     shiftX = e.clientX - e.target.getBoundingClientRect().left
-//     shiftY = e.clientY - e.target.getBoundingClientRect().top
-//     let target = e.target
-//     let elemBelow
-//     target.classList.add('animation')
-//     target.style.zIndex = 1000
-    
-//     let number = +e.target.id
-//     let blank = array.length
-//     let moveCoords
-//     let isMoveValid
-//     const buttonCoords = findCoords(number, matrix)
-//     const blankCoords = findCoords(blank, matrix)
-//     const isValid = isValidForSwap(buttonCoords, blankCoords);
-    
-//     function onMouseMove(event) {
-//         event.target.classList.remove('animation')
-//         event.target.hidden = true
-//         elemBelow = +document.elementFromPoint(event.clientX, event.clientY).id;
-//         event.target.hidden = false
-//         moveAt(event.layerX, event.layerY, shiftX, shiftY, event.target);
-//         moveCoords = findCoords(elemBelow, matrix)
-//         droppable = false
-//         if(moveCoords) {
-//             isMoveValid = isValidForMove(moveCoords, blankCoords, number, blank);
-//         }
-//         if(event.layerX < 0 || event.layerY <= 0 || event.layerX > field[0].offsetWidth || event.layerY > field[0].offsetWidth) {
-//             event.target.classList.add('animation')
-//             field[0].removeEventListener('mousemove', onMouseMove)
-//             setDicePosition(matrix)
-//             setTimeout(() => {
-//                 remover(nodes)
-//             }, 200);
-//         }
-//     }
-
-//     if(number !== 0 && isValid) {
-//         field[0].addEventListener('mousemove', onMouseMove )
-//     }
-
-//     target.onmouseup = function(ev) {
-//         if(number !== 0 && isMoveValid) {
-//             diceSwap(buttonCoords, blankCoords, matrix)
-//             setDicePosition(matrix)
-//             turns++
-//             updateTurns()
-//         }
-
-//         target.classList.add('animation')
-//         setDicePosition(matrix)
-//         field[0].removeEventListener('mousemove', onMouseMove)
-//         if(number !== 0 && isValid && droppable) {
-//             diceSwap(buttonCoords, blankCoords, matrix)
-//             setDicePosition(matrix)
-//             turns++
-//             updateTurns()
-//         }
-//         droppable = true
-//         target.onmouseup = null
-//         // target.classList.remove('animation')
-//         // setTimeout(() => {
-//         //     remover(nodes)
-//         // }, 200);
-//     }
-//     field[0].onmouseup = function(){
-//         setTimeout(() => {
-//             remover(nodes)
-//         }, 200); 
-//         field[0].onmouseup = null
-//     }
-// })
 
 
 
@@ -449,10 +381,95 @@ function isValidForMove(coords1, coords2, below, upper) {
     return coords1.x === coords2.x && coords1.y ===coords2.y
 }
 
+let cPanel = Array.from(document.getElementsByClassName('control-panel'))
+
 function diceSwap(coords1, coords2, matrix) {
     let temp = matrix[coords1.y][coords1.x]
     matrix[coords1.y][coords1.x] = matrix[coords2.y][coords2.x]
     matrix[coords2.y][coords2.x] = temp
+    playAudio()
+
+    if(isWon(matrix)) {
+        cPanel[0].classList.add('blocked')
+        createNotification(true)
+        let today = new Date().toLocaleDateString()
+        let result = {
+            date: today,
+            turns: turns + 1,
+            seconds: calcDuration(seconds),
+            length: arrayLength,
+        }
+        resultsList.push(result)
+        localStorage.setItem('results', JSON.stringify(resultsList))
+    }
+}
+
+function isWon(matrix) {
+    let flatMatrix = matrix.flat()
+    for(let i = 0; i < sortedArray.length; i++) {
+        if(flatMatrix[i] !== sortedArray[i]) {
+            return false
+        }
+    }
+    return true
+}
+
+
+
+function showResults(list) {
+    if(list.length) {
+        let temp = list.sort((a, b) => a.turns - b.turns)
+        createScoreBoard(temp)
+    } else {
+        createScoreBoard(0)
+    }
+}
+
+function createScoreBoard(arr) {
+    let div = document.createElement('div')
+    div.className = "scoreboard"
+    if(arr) {
+        for(let i = 0; i < arr.length; i++) {
+            div.append(createScoreString(arr[i], i+1))
+        }
+    } else {
+        div.append(createScoreString(0, 0))
+    }
+    div.addEventListener('click', ()=> {
+        div.remove()
+    })
+    document.body.append(div)
+}
+
+function createScoreString(item, index) {
+    let rString = document.createElement('p')
+    if(item) {
+        rString.className = 'result-string'
+        rString.textContent = `${index}.  Turns: ${item.turns}. Time: ${item.seconds}. Mode: ${Math.sqrt(item.length)}x${Math.sqrt(item.length)}. Date: ${item.date}`
+    } else {
+        rString.className = 'result-string-empty'
+        rString.textContent = `The list of games is empty`
+    }
+    return rString
+}
+
+
+
+function createNotification(bool) {
+    let notice = document.createElement('p')
+    notice.className = 'main-notification'
+    if(bool) {
+        notice.textContent = `Hooray! You solved the puzzle in ${calcDuration(seconds)} and ${turns+1} moves!`;
+    } else {
+        notice.textContent = `You don't have a saved game`;
+    }
+    [...mainContainer][0].append(notice)
+    clearInterval(myInterval)
+    field[0].classList.add('blocked')
+    setTimeout(()=>{
+        [...mainContainer][0].lastChild.remove()
+        cPanel[0].classList.remove('blocked')
+    }, 3000)
 }
 
 
@@ -464,19 +481,37 @@ function moveAt(pageX, pageY, sx, sy, el) {
 
 //   console.log(droppable);
 
-  function remover(list) {
+function remover(list) {
     list.forEach(item => {
         item.style.zIndex = 1
         item.classList.remove('animation')
     })
-  }
+}
 
-  document.addEventListener('mouseup', (ev)=> {
+document.addEventListener('mouseup', (ev)=> {
     if(ev.target === document.body) {
         // console.log('132');
         remover(nodes)
     }
-  })
+})
 
+const audio = new Audio()
+audio.src = './assets/quick-swhooshing-noise-80898.mp3'
 
+function playAudio() {
+    audio.currentTime = 0;
+    audio.play()
+}
+
+function mute(boolean) {
+    if(boolean) {
+        audio.volume = 1
+        volume = false
+    } else {
+        audio.volume = 0
+        volume = true
+    }
+}
+
+  
 alert('Не думал, что когда-нибудь окажусь в этой ситуации, но судьба подкинула трудностей непреодолимого характера, из-за чего сделать к дедлайну таск - я не успел. \n Закинул функционал, который успел накидать на коленке. Если будет возможность и желание проверить в последний день - буду весьма признателен.(могу сам отписать в диск, по готовности, если прикрепите Никнейм в комментарии). Спасибо. \n И да, работа ещё не закончена).')
