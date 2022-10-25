@@ -1,4 +1,3 @@
-
 let arrayLength = 16
 
 let array = new Array(arrayLength).fill(0).map((el, index) => el = index+1)
@@ -16,7 +15,6 @@ if(localStorage.getItem('results')) {
     resultsList = JSON.parse(localStorage.getItem('results'))
 }
 
-
 function createContainer() {
     let container = document.createElement('div')
     container.className = 'main-container'
@@ -26,7 +24,6 @@ function createContainer() {
 let mainContainer = document.getElementsByClassName('main-container')
 
 createContainer()
-
 
 function createField() {
     let field = document.createElement('div')
@@ -53,7 +50,6 @@ function createDice(num) {
 }
 
 let nodes = Array.from(document.getElementsByClassName(diceClassName))
-
 
 function createPanel() {
     let panel = document.createElement('div')
@@ -84,11 +80,9 @@ function createDiffPanel() {
     document.body.append(diffPanel)
 }
 
-
 createDiffPanel()
 
 let difficulty = Array.from(document.getElementsByClassName('diff'))
-
 
 difficulty.forEach(el => el.addEventListener('click', (e)=> {
     if(e.target.closest('.diff-3')) {
@@ -127,9 +121,6 @@ function changeDiff(num){
     field[0].addEventListener('mousedown', moveDices)
 }
 
-function loadMatrixFromLs() {
-    
-}
 
 function loadGame(){
     console.log(localStorage);
@@ -155,19 +146,14 @@ function loadGame(){
     } else {
         cPanel[0].classList.add('blocked')
         createNotification(false)
-
     }
 }
 
 field[0].addEventListener('mousedown', moveDices)
 
-
-
-
 let manage = Array.from(document.getElementsByClassName('control-panel')) 
 
 manage[0].addEventListener('click', (item)=> {
-// console.log(item.target);
     if(item.target.closest('.start-and-shuffle')) {
         matrix = []
         randomArray(array)
@@ -199,7 +185,6 @@ manage[0].addEventListener('click', (item)=> {
     }
 })
 
-
 function saveMatrixToLs(ar) {
     localStorage.setItem('savedGame', JSON.stringify(ar))
     localStorage.setItem('time', seconds)
@@ -208,13 +193,9 @@ function saveMatrixToLs(ar) {
     console.log(localStorage);
 }
 
-
-
 function updateTurns() {
     Array.from(document.getElementsByClassName('turns'))[0].innerHTML = `Turns: ${turns}`
 }
-
-
 
 let myInterval
 
@@ -227,16 +208,12 @@ function stopwatch() {
     }
 }
 
-function breakStopwatch() {
-    clearInterval(myInterval);
-}
 
 function calcDuration(num) { 
     let sec = parseInt(num % 60);
     let min = Math.floor(num / 60);
     return `${min.toString().padStart(2, 0)}:${sec.toString().padStart(2, 0)}` || '00:00'
 }
-
 
 function createMatrix(arr) {
     let step = Math.sqrt(arr.length)
@@ -256,10 +233,7 @@ function setDicePosition(matrix) {
         }
     }
     nodes[nodes.length-1].classList.add('hidden')
-
 }
-
-
 
 function setDiceStyle(node, x, y) {
     node.style.transform = `translate3D(${x * 100}%, ${y * 100}%, 0)`
@@ -274,14 +248,10 @@ function randomArray(arr) {
     }
 }
 
-
-
 let droppable = true
-
 let shiftX
 let shiftY
 let target
-
 
 function moveDices(e) {
     shiftX = e.clientX - e.target.getBoundingClientRect().left
@@ -327,7 +297,6 @@ function moveDices(e) {
     target.onmouseup = function(ev) {
         field[0].removeEventListener('mousemove', onMouseMove)
         if(number !== 0 && isMoveValid) {
-            // playAudio()
             diceSwap(buttonCoords, blankCoords, matrix)
             setDicePosition(matrix)
             turns++
@@ -336,7 +305,6 @@ function moveDices(e) {
         target.classList.add('animation')
         setDicePosition(matrix)
         if(number !== 0 && isValid && droppable) {
-            // playAudio()
             diceSwap(buttonCoords, blankCoords, matrix)
             setDicePosition(matrix)
             turns++
@@ -356,9 +324,6 @@ function moveDices(e) {
     }
 }
 
-
-
-
 function findCoords(num, matrix) {
     for(let y = 0; y < matrix.length; y++) {
         for(let x = 0; x < matrix[y].length; x++) {
@@ -373,7 +338,6 @@ function isValidForSwap(coords1, coords2) {
     const diffX = Math.abs(coords1.x - coords2.x)
     const diffY = Math.abs(coords1.y - coords2.y)
     return (diffX === 1 || diffY === 1) && (coords1.x === coords2.x || coords1.y === coords2.y)
-
     // return true
 }
 
@@ -414,8 +378,6 @@ function isWon(matrix) {
     return true
 }
 
-
-
 function showResults(list) {
     if(list.length) {
         let temp = list.sort((a, b) => a.turns - b.turns)
@@ -453,8 +415,6 @@ function createScoreString(item, index) {
     return rString
 }
 
-
-
 function createNotification(bool) {
     let notice = document.createElement('p')
     notice.className = 'main-notification'
@@ -472,14 +432,11 @@ function createNotification(bool) {
     }, 3000)
 }
 
-
 function moveAt(pageX, pageY, sx, sy, el) {
     let x = 100 / (field[0].offsetWidth / Math.sqrt(array.length)) * (pageX-sx)
     let y = 100 / (field[0].offsetWidth / Math.sqrt(array.length)) * (pageY-sy)
     el.style.transform = `translate3d(${x}%, ${y}%, 0)`
 }
-
-//   console.log(droppable);
 
 function remover(list) {
     list.forEach(item => {
@@ -490,13 +447,13 @@ function remover(list) {
 
 document.addEventListener('mouseup', (ev)=> {
     if(ev.target === document.body) {
-        // console.log('132');
         remover(nodes)
     }
 })
 
 const audio = new Audio()
 audio.src = './assets/quick-swhooshing-noise-80898.mp3'
+audio.volume = 0.1
 
 function playAudio() {
     audio.currentTime = 0;
@@ -505,13 +462,10 @@ function playAudio() {
 
 function mute(boolean) {
     if(boolean) {
-        audio.volume = 1
+        audio.volume = 0.1
         volume = false
     } else {
         audio.volume = 0
         volume = true
     }
 }
-
-  
-alert('Не думал, что когда-нибудь окажусь в этой ситуации, но судьба подкинула трудностей непреодолимого характера, из-за чего сделать к дедлайну таск - я не успел. \n Закинул функционал, который успел накидать на коленке. Если будет возможность и желание проверить в последний день - буду весьма признателен.(могу сам отписать в диск, по готовности, если прикрепите Никнейм в комментарии). Спасибо. \n И да, работа ещё не закончена).')

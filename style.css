@@ -17,14 +17,12 @@ body {
     flex-direction: column;
     align-items: center;
     background: url(./assets/dark_wood.png);
-
-
 }
 
 .main-container {
     position: relative;
     margin: 20px 0 50px 0;
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
     aspect-ratio: 1 / 1;
     background-color: rgba(90, 90, 90, 0.381);
@@ -52,7 +50,6 @@ body {
     left: 0;
     width: 25%;
     aspect-ratio: 1 / 1;
-    /* background-color: rgb(165, 162, 162); */
     background: url(./assets/footer_lodyas.png);
     font-size: 5rem;
     border: 1px solid rgb(209, 209, 209);
@@ -88,7 +85,7 @@ body {
 
 .control-panel {
     margin-top: 50px;
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -109,7 +106,6 @@ body {
     cursor: pointer;
 }
 
-
 .info-panel {
     padding: 0 15px;
     display: flex;
@@ -117,15 +113,9 @@ body {
     font-size: 2.5rem;
     color: white;
 }
-.timer {
-
-}
-.turns {
-
-}
 
 .diff-panel {
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
     display: flex;
     justify-content: space-evenly;
@@ -138,7 +128,7 @@ body {
 }
 
 button {
-    /* transition: all linear 0.2s; */
+    transition: all linear 0.2s;
 }
 
 button:hover {
@@ -180,7 +170,7 @@ button:hover {
 }
 
 .result-string {
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
     padding: 3px 0 3px 10px;
     background-color: rgb(163, 163, 163);
@@ -188,7 +178,7 @@ button:hover {
 }
 
 .result-string-empty {
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
     padding: 3px 0 3px 10px;
     background-color: rgb(163, 163, 163);
