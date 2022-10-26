@@ -256,8 +256,8 @@ let target
 function moveDices(e) {
     shiftX = e.clientX - e.target.getBoundingClientRect().left
     shiftY = e.clientY - e.target.getBoundingClientRect().top
-    target = e.target
     let elemBelow
+    target = e.target
     target.classList.add('animation')
     let number = +e.target.id
     let blank = array.length
@@ -267,8 +267,7 @@ function moveDices(e) {
     const blankCoords = findCoords(blank, matrix)
     const isValid = isValidForSwap(buttonCoords, blankCoords);
     
-    function onMouseMove(event) {
-        console.log(target.id);
+    function onMouseMovee(event) {
         target.classList.remove('animation')
         target.style.zIndex = 1000
         target.hidden = true
@@ -280,22 +279,44 @@ function moveDices(e) {
         if(moveCoords) {
             isMoveValid = isValidForMove(moveCoords, blankCoords, number, blank);
         }
-        if(event.layerX < 0 || event.layerY <= 0 || event.layerX > field[0].offsetWidth || event.layerY > field[0].offsetWidth) {
-            event.target.classList.add('animation')
-            field[0].removeEventListener('mousemove', onMouseMove)
+        // if(event.layerX < 0 || event.layerY <= 0 || event.layerX > field[0].offsetWidth || event.layerY > field[0].offsetWidth || elemBelow2) {
+        // // if(elemBelow2) {
+        //     event.target.classList.add('animation')
+        //     // field[0].removeEventListener('mousemove', onMouseMove)
+        //     field[0].removeEventListener('mousemove', onMouseMove)
+        //     field[0].onmouseup = null
+        //     target.onmouseup = null
+        //     setDicePosition(matrix)
+        //     setTimeout(() => {
+            //         remover(nodes)
+            //     }, 200);
+            // }
+        }
+        
+        if(number !== 0 && isValid) {
+            field[0].addEventListener('mousemove', onMouseMovee )
+            document.addEventListener('mousemove', removeListeners)
+    }
+
+    function removeListeners(e) {
+        target.hidden = true
+        let elemBelow2 = document.elementFromPoint(e.clientX, e.clientY) === document.body;
+        target.hidden = false
+    
+        if(elemBelow2) {
+            field[0].removeEventListener('mousemove', onMouseMovee)
+            target.onmouseup = null
+            field[0].onmouseup = null
+            document.removeEventListener('mousemove', removeListeners)
             setDicePosition(matrix)
-            setTimeout(() => {
-                remover(nodes)
-            }, 200);
+            droppable = true
+            remover(nodes)
+
         }
     }
 
-    if(number !== 0 && isValid) {
-        field[0].addEventListener('mousemove', onMouseMove )
-    }
-
     target.onmouseup = function(ev) {
-        field[0].removeEventListener('mousemove', onMouseMove)
+        field[0].removeEventListener('mousemove', onMouseMovee)
         if(number !== 0 && isMoveValid) {
             diceSwap(buttonCoords, blankCoords, matrix)
             setDicePosition(matrix)
@@ -312,6 +333,7 @@ function moveDices(e) {
         }
         droppable = true
         target.onmouseup = null
+        document.removeEventListener('mousemove', removeListeners)
         setTimeout(() => {
             remover(nodes)
         }, 200);
@@ -320,6 +342,7 @@ function moveDices(e) {
         setTimeout(() => {
             remover(nodes)
         }, 200); 
+        target.onmouseup = null
         field[0].onmouseup = null
     }
 }
@@ -341,7 +364,7 @@ function isValidForSwap(coords1, coords2) {
     // return true
 }
 
-function isValidForMove(coords1, coords2, below, upper) {
+function isValidForMove(coords1, coords2) {
     return coords1.x === coords2.x && coords1.y ===coords2.y
 }
 
@@ -445,11 +468,16 @@ function remover(list) {
     })
 }
 
-document.addEventListener('mouseup', (ev)=> {
-    if(ev.target === document.body) {
-        remover(nodes)
-    }
-})
+// document.addEventListener('mousemove', (ev)=> {
+//     if(ev.target === document.body) {
+//         remover(nodes)
+//         field[0].removeEventListener('mousemove', onMouseMove)
+//         field[0].onmouseup = null
+//         target.onmouseup = null
+//     }
+//     // console.log(ev.target === document.body);
+// })
+
 
 const audio = new Audio()
 audio.src = './assets/quick-swhooshing-noise-80898.mp3'
